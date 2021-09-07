@@ -1,130 +1,150 @@
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import DSL.DSL;
+import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+import java.util.List;
 
 public class TesteCampoTreinamento {
 
-	private WebDriver entrada;
-	private WebDriver maximizaNavegador;
+    private WebDriver entrada;
+    private WebDriver maximizaNavegador;
+    private DSL dsl;
 
-	@Test
-	@Ignore
-	public void testeTreinamento() {
+    @Before
+    public void inicializa() {
+        // Driver do google
+        System.setProperty("webdriver.chrome.driver", "D:\\Documentos\\DriversTestes\\chromedriver.exe");
+        entrada = new ChromeDriver();
 
-		// Driver do google
-		System.setProperty("webdriver.chrome.driver", "D:\\Documentos\\DriversTestes\\chromedriver.exe");
-		// abrirNavegador = new ChromeDriver();
+        // Driver Firefox
+        System.setProperty("webdriver.gecko.driver", "D:\\Documentos\\DriversTestes\\geckodriver.exe");
+        // entrada = new FirefoxDriver();
 
-		// Driver Firefox
-		System.setProperty("webdriver.gecko.driver", "D:\\Documentos\\DriversTestes\\geckodriver.exe");
-		entrada = new FirefoxDriver();
+        entrada.manage().window().maximize();
+        entrada.get("file:///" + System.getProperty("user.dir") + "/src/test/resources/componentes.html");
 
-		entrada.manage().window().maximize();
-		entrada.get("file:///" + System.getProperty("user.dir") + "/src/test/resources/componentes.html");
+        dsl = new DSL(entrada);
+    }
 
-	}
 
-	@Test
-	public void testeTxtField() {
+    @Test
+    public void testeTxtField() {
 
-		// Driver do google
-		System.setProperty("webdriver.chrome.driver", "D:\\Documentos\\DriversTestes\\chromedriver.exe");
-		// entrada = new ChromeDriver();
+        dsl.escreve("elementosForm:nome", "Jean Heberth");
+        Assert.assertEquals("Jean Heberth", dsl.obterValorCampo("elementosForm:nome"));
 
-		// Driver Firefox
-		System.setProperty("webdriver.gecko.driver", "D:\\Documentos\\DriversTestes\\geckodriver.exe");
-		entrada = new FirefoxDriver();
+    }
 
-		entrada.manage().window().maximize();
-		entrada.get("file:///" + System.getProperty("user.dir") + "/src/test/resources/componentes.html");
 
-		entrada.findElement(By.id("elementosForm:nome")).sendKeys("Jean Heberth");
-		Assert.assertEquals("Jean Heberth", entrada.findElement(By.id("elementosForm:nome")).getAttribute("value"));
+    @Test
+    public void testeTxtArea() {
 
-		entrada.findElement(By.id("elementosForm:sobrenome")).sendKeys("Souza Vieira");
-		Assert.assertEquals("Souza Vieira", entrada.findElement(By.id("elementosForm:sobrenome")).getAttribute("value"));
+        dsl.escreve("elementosForm:sugestoes", "Teste");
+        Assert.assertEquals("Teste", dsl.obterValorCampo("elementosForm:sugestoes"));
 
-	}
+    }
 
-	@Test
-	@Ignore
-	public void testeTxtArea() {
+    @Test
+    public void RadioButton() {
+        dsl.clicarRadio("elementosForm:sexo:0");
+        Assert.assertTrue(dsl.isRadioMarcado("elementosForm:sexo:0"));
 
-		// Driver do google
-		System.setProperty("webdriver.chrome.driver", "D:\\Documentos\\DriversTestes\\chromedriver.exe");
-		// entrada = new ChromeDriver();
+    }
 
-		// Driver Firefox
-		System.setProperty("webdriver.gecko.driver", "D:\\Documentos\\DriversTestes\\geckodriver.exe");
-		entrada = new FirefoxDriver();
+    @Test
+    public void checkbox() {
+        dsl.clicarRadio("elementosForm:comidaFavorita:2");
+        Assert.assertTrue(dsl.isRadioMarcado("elementosForm:comidaFavorita:2"));
 
-		entrada.manage().window().maximize();
-		entrada.get("file:///" + System.getProperty("user.dir") + "/src/test/resources/componentes.html");
+    }
 
-		entrada.findElement(By.id("elementosForm:sugestoes")).sendKeys("Teste");
-		Assert.assertEquals("Teste", entrada.findElement(By.id("elementosForm:sugestoes")).getAttribute("value"));
+    @Test
+    public void combobox() {
 
-	}
+        dsl.selecionarCombo("elementosForm:escolaridade", "Mestrado");
+        Assert.assertEquals("Mestrado", dsl.ObterValorCombo("elementosForm:escolaridade"));
+    }
 
-	@Test
-	@Ignore
-	public void RadioButton() {
 
-		// Driver do google
-		System.setProperty("webdriver.chrome.driver", "D:\\Documentos\\DriversTestes\\chromedriver.exe");
-		// entrada = new ChromeDriver();
+//    @Test
+//    public void comboboxLista() {
+//        WebElement dropdownEscolaridade = entrada.findElement(By.id("elementosForm:escolaridade"));
+//        Select combo = new Select(dropdownEscolaridade);
+//        List<WebElement> options = combo.getOptions();
+//        Assert.assertEquals(8, options.size());
+//
+//        boolean encontrou = false;
+//
+//        for (WebElement option : options) {
+//            if (option.getText().equals("Mestrado")) {
+//                encontrou = true;
+//                break;
+//            }
+//        }
+//        Assert.assertTrue(encontrou);
+//    }
 
-		// Driver Firefox
-		System.setProperty("webdriver.gecko.driver", "D:\\Documentos\\DriversTestes\\geckodriver.exe");
-		entrada = new FirefoxDriver();
 
-		entrada.manage().window().maximize();
-		entrada.get("file:///" + System.getProperty("user.dir") + "/src/test/resources/componentes.html");
+    // Selecionando vários elementos dentro de um comboBox
+    @Test
+    public void comboboxMultiplo() {
+        dsl.selecionarCombo("elementosForm:esportes", "Natacao");
+        dsl.selecionarCombo("elementosForm:esportes", "Corrida");
+        dsl.selecionarCombo("elementosForm:esportes", "O que eh esporte?");
 
-		entrada.findElement(By.id("elementosForm:sexo:0")).click();
-		Assert.assertTrue(entrada.findElement(By.id("elementosForm:sexo:0")).isSelected());
 
-	}
+        WebElement dropdownEscolaridade = entrada.findElement(By.id("elementosForm:esportes"));
+        Select combo = new Select(dropdownEscolaridade);
 
-	@Test
-	@Ignore
-	public void checkbox() {
+        List<WebElement> allSelectedOptions = combo.getAllSelectedOptions();
+        Assert.assertEquals(3, allSelectedOptions.size());
 
-		// Driver do google
-		System.setProperty("webdriver.chrome.driver", "D:\\Documentos\\DriversTestes\\chromedriver.exe");
-		// entrada = new ChromeDriver();
+        combo.deselectByVisibleText("Corrida");
+        allSelectedOptions = combo.getAllSelectedOptions();
+        Assert.assertEquals(2, allSelectedOptions.size());
 
-		// Driver Firefox
-		System.setProperty("webdriver.gecko.driver", "D:\\Documentos\\DriversTestes\\geckodriver.exe");
-		entrada = new FirefoxDriver();
 
-		entrada.manage().window().maximize();
-		entrada.get("file:///" + System.getProperty("user.dir") + "/src/test/resources/componentes.html");
+    }
 
-		entrada.findElement(By.id("elementosForm:comidaFavorita:2")).click();
-		Assert.assertTrue(entrada.findElement(By.id("elementosForm:comidaFavorita:2")).isSelected());
+    public void deveInteragirComBotoes() {
+        dsl.clicarBotao("buttonSimple");
 
-		entrada.findElement(By.id("elementosForm:comidaFavorita:1")).click();
-		Assert.assertTrue(entrada.findElement(By.id("elementosForm:comidaFavorita:1")).isSelected());
+        WebElement botao = entrada.findElement(By.id("buttonSimple"));
+        botao.click();
+    }
 
-		entrada.findElement(By.id("elementosForm:comidaFavorita:0")).click();
-		Assert.assertTrue(entrada.findElement(By.id("elementosForm:comidaFavorita:0")).isSelected());
+    public void clicarNoLink() {
+        dsl.clicarLink("Voltar");
+        Assert.assertEquals("Voltou!", dsl.obterTextoLink("resultado"));
+    }
 
-	}
+    public void buscarTextosNaPagina() {
+        Assert.assertEquals("Campo de Treinamento", dsl.obterTextoLink(By.tagName("h3")));
+
+        Assert.assertEquals("Cuidado onde clica, muitas armadilhas...",
+             dsl.obterTextoLink(By.className("facilAchar")));
+    }
+
+    @After
+    public void finalize() throws Exception {
+        entrada.quit();
+    }
 }
 
-/*
- * { WebElement dropdownEscolaridade =
- * entrada.findElement(By.id("elementosForm:escolaridade"));
- * dropdownEscolaridade.findElement(By.xpath("//option[.='Superior']")).click();
- * } { WebElement dropdownEsportes =
- * entrada.findElement(By.id("elementosForm:esportes"));
- * dropdownEsportes.findElement(By.xpath("//option[.='Karate']")).click(); }
- */
 
-// entrada.quit();
+
+
+
+
+
+
+
+
+
+
+
