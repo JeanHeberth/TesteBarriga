@@ -111,13 +111,10 @@ public class TesteCadastroPage {
         page.setSobreNome("Souza Vieira");
         page.setSexoMasculino();
         page.setComidaCarne();
-        page.setComidaPizza();
-        page.setComidaFrango();
         page.setEsporte("Natacao", "O que eh esporte?");
         page.cadastrar();
         Alert alert = entrada.switchTo().alert();
         Assert.assertEquals("Voce faz esporte ou nao?", alert.getText());
-
     }
 
 

@@ -20,6 +20,10 @@ public class CampoTreinamentoPage {
         dsl.escrever("elementosForm:sobrenome", sobreNome);
     }
 
+    public void setSexoFeminino() {
+        dsl.campoSelecionar("elementosForm:sexo:1");
+    }
+
     public void setSexoMasculino() {
         dsl.campoSelecionar("elementosForm:sexo:0");
     }
