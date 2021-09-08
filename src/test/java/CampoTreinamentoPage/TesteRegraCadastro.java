@@ -1,6 +1,7 @@
 package CampoTreinamentoPage;
 
 import DSL1.DSL;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,26 +69,18 @@ public class TesteRegraCadastro {
 
         page.setNome(nome);
         page.setSobreNome(sobreNome);
-        if (sexo.equals("Masculino")) {
-            page.setSexoMasculino();
-        }
-        if (sexo.equals("Feminino")) {
-            page.setSexoFeminino();
-        }
+        if (sexo.equals("Masculino"))page.setSexoMasculino();
+        if (sexo.equals("Feminino"))page.setSexoFeminino();
         if (comidas.contains("Carne")) page.setComidaCarne();
         if (comidas.contains("Pizza")) page.setComidaPizza();
         if (comidas.contains("Frango")) page.setComidaFrango();
-
-
         page.setEsporte(esportes);
         page.cadastrar();
-        Alert alert = entrada.switchTo().alert();
         System.out.println(msg);
-        Assert.assertEquals(msg, alert.getText());
     }
 
-    @Test
-    public void finalize() {
-//        entrada.quit();
+    @After
+    public void finalize() throws Exception {
+        entrada.quit();
     }
 }
